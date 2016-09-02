@@ -16,38 +16,13 @@ type tracer struct {
 }
 
 func (t tracer) Ok(event string, fields ...Field) error {
-	zapFields := make([]zap.Field, len(fields))
-	for index, field := range fields {
-		switch field.Type {
-		case TypeFloat:
-			zapFields[index] = zap.Float64(field.Key, field.Float)
-		case TypeInt:
-			zapFields[index] = zap.Int64(field.Key, field.Int)
-		case TypeObject:
-			zapFields[index] = zap.Object(field.Key, field.Object)
-		case TypeString:
-			zapFields[index] = zap.String(field.Key, field.String)
-		}
-	}
+	zapFields := ZapFields(nil, fields...)
 	t.logger.Info(event, zapFields...)
 	return nil
 }
 
 func (t tracer) Wrap(err error, event string, fields ...Field) error {
-	zapFields := make([]zap.Field, len(fields)+1)
-	for index, field := range fields {
-		switch field.Type {
-		case TypeFloat:
-			zapFields[index] = zap.Float64(field.Key, field.Float)
-		case TypeInt:
-			zapFields[index] = zap.Int64(field.Key, field.Int)
-		case TypeObject:
-			zapFields[index] = zap.Object(field.Key, field.Object)
-		case TypeString:
-			zapFields[index] = zap.String(field.Key, field.String)
-		}
-	}
-	zapFields[len(fields)] = zap.Error(err)
+	zapFields := ZapFields(err, fields...)
 	t.logger.Info(event, zapFields...)
 	return err
 }

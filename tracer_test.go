@@ -2,8 +2,9 @@ package trace_test
 
 import (
 	"context"
-	"io"
 	"testing"
+
+	"io"
 
 	"github.com/altairsix/trace"
 	. "github.com/smartystreets/goconvey/convey"
